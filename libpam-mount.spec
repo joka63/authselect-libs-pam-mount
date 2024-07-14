@@ -1,3 +1,4 @@
+%global srcname authselect
 # Do not terminate build if language files are empty.
 %define _empty_manifest_terminate_build 0
 
@@ -8,16 +9,9 @@ Summary:        Extends authselect profile "local" to support pam_mount
 URL:            https://github.com/authselect/authselect
 
 License:        GPL-3.0-or-later
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/%{version}/%{srcname}-%{version}.tar.gz
 
 %global makedir %{_builddir}/%{name}-%{version}
-
-# Disable NIS profile on RHEL
-%if 0%{?rhel}
-%global with_nis_profile 0
-%else
-%global with_nis_profile 1
-%endif
 
 # Set the default profile
 %{?fedora:%global default_profile xlocal with-silent-lastlog with-pam-mount}
@@ -31,21 +25,21 @@ Wrapper for pam_mount: extends current authselect profile "local"
 to include pam_mount.so support for PAM. 
 
 %prep
-%setup -q
+%setup -q -n %{srcname}-%{version}
 
 for p in %patches ; do
     %__patch -p1 -i $p
 done
 
+cp -a profiles/local profiles/xlocal
+
 %build
 
-%make_build
-
 %check
-%make_build check
 
 %install
-%make_install
+install -d %{buildroot}/%{_datadir}/authselect/vendor/xlocal
+install -D profiles/xlocal/* %{buildroot}/%{_datadir}/authselect/vendor/xlocal
 
 # Find translations
 
@@ -54,23 +48,18 @@ done
 # Remove .la and .a files created by libtool
 
 %files 
-%dir %{_sysconfdir}/authselect
-%dir %{_localstatedir}/lib/authselect
-%ghost %attr(0755,root,root) %{_localstatedir}/lib/authselect/backups/
-%dir %{_datadir}/authselect
 %dir %{_datadir}/authselect/vendor
-%dir %{_datadir}/authselect/default
-%dir %{_datadir}/authselect/default/xlocal/
-%{_datadir}/authselect/default/xlocal/dconf-db
-%{_datadir}/authselect/default/xlocal/dconf-locks
-%{_datadir}/authselect/default/xlocal/fingerprint-auth
-%{_datadir}/authselect/default/xlocal/nsswitch.conf
-%{_datadir}/authselect/default/xlocal/password-auth
-%{_datadir}/authselect/default/xlocal/postlogin
-%{_datadir}/authselect/default/xlocal/README
-%{_datadir}/authselect/default/xlocal/REQUIREMENTS
-%{_datadir}/authselect/default/xlocal/smartcard-auth
-%{_datadir}/authselect/default/xlocal/system-auth
+%dir %{_datadir}/authselect/vendor/xlocal/
+%{_datadir}/authselect/vendor/xlocal/dconf-db
+%{_datadir}/authselect/vendor/xlocal/dconf-locks
+%{_datadir}/authselect/vendor/xlocal/fingerprint-auth
+%{_datadir}/authselect/vendor/xlocal/nsswitch.conf
+%{_datadir}/authselect/vendor/xlocal/password-auth
+%{_datadir}/authselect/vendor/xlocal/postlogin
+%{_datadir}/authselect/vendor/xlocal/README
+%{_datadir}/authselect/vendor/xlocal/REQUIREMENTS
+%{_datadir}/authselect/vendor/xlocal/smartcard-auth
+%{_datadir}/authselect/vendor/xlocal/system-auth
 %license COPYING
 %doc README.md
 

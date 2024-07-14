@@ -1,6 +1,7 @@
 %global srcname authselect
 # Do not terminate build if language files are empty.
 %define _empty_manifest_terminate_build 0
+%define debug_package %{nil}
 
 Name:           libpam-mount
 Version:        1.5.0
@@ -11,12 +12,12 @@ URL:            https://github.com/authselect/authselect
 License:        GPL-3.0-or-later
 Source0:        %{url}/archive/%{version}/%{srcname}-%{version}.tar.gz
 
+BuildArch: noarch
+
 %global makedir %{_builddir}/%{name}-%{version}
 
-# Set the default profile
-%{?fedora:%global default_profile xlocal with-silent-lastlog with-pam-mount}
-
 # Patches
+
 Requires: authselect-libs
 Requires: pam_mount
 
@@ -38,8 +39,8 @@ cp -a profiles/local profiles/xlocal
 %check
 
 %install
-install -d %{buildroot}/%{_datadir}/authselect/vendor/xlocal
-install -D profiles/xlocal/* %{buildroot}/%{_datadir}/authselect/vendor/xlocal
+install -d %{buildroot}/%{_datadir}/authselect/default/xlocal
+install -D profiles/xlocal/* %{buildroot}/%{_datadir}/authselect/default/xlocal
 
 # Find translations
 
@@ -48,26 +49,30 @@ install -D profiles/xlocal/* %{buildroot}/%{_datadir}/authselect/vendor/xlocal
 # Remove .la and .a files created by libtool
 
 %files 
-%dir %{_datadir}/authselect/vendor
-%dir %{_datadir}/authselect/vendor/xlocal/
-%{_datadir}/authselect/vendor/xlocal/dconf-db
-%{_datadir}/authselect/vendor/xlocal/dconf-locks
-%{_datadir}/authselect/vendor/xlocal/fingerprint-auth
-%{_datadir}/authselect/vendor/xlocal/nsswitch.conf
-%{_datadir}/authselect/vendor/xlocal/password-auth
-%{_datadir}/authselect/vendor/xlocal/postlogin
-%{_datadir}/authselect/vendor/xlocal/README
-%{_datadir}/authselect/vendor/xlocal/REQUIREMENTS
-%{_datadir}/authselect/vendor/xlocal/smartcard-auth
-%{_datadir}/authselect/vendor/xlocal/system-auth
+%dir %{_datadir}/authselect/default
+%dir %{_datadir}/authselect/default/xlocal/
+%{_datadir}/authselect/default/xlocal/dconf-db
+%{_datadir}/authselect/default/xlocal/dconf-locks
+%{_datadir}/authselect/default/xlocal/fingerprint-auth
+%{_datadir}/authselect/default/xlocal/nsswitch.conf
+%{_datadir}/authselect/default/xlocal/password-auth
+%{_datadir}/authselect/default/xlocal/postlogin
+%{_datadir}/authselect/default/xlocal/README
+%{_datadir}/authselect/default/xlocal/REQUIREMENTS
+%{_datadir}/authselect/default/xlocal/smartcard-auth
+%{_datadir}/authselect/default/xlocal/system-auth
 %license COPYING
 %doc README.md
 
 %preun
 if [ $1 == 0 ] ; then
     # Switch back to standard local profile, if profile xlocal is still selected.
-    if [ $(%{_bindir/authselect} current -r | awk '{print $1}') == xlocal ] ; then
-        %{_bindir}/authselect local
+    CurProfile=$(%{_bindir/authselect} current -r | awk '{print $1}')
+    CurProfileName=$(echo $CurProfile | awk '{print $1}')
+    if [ "$OldProfileName" == xlocal ] ; then
+        %{_bindir}/authselect disable-feature with-pam-mount -q
+        OldProfile=$(%{_bindir/authselect} current -r | %__sed 's/xlocal/local/')
+        %{_bindir}/authselect select $OldProfile --force --nobackup &> /dev/null
     fi
 fi
 
@@ -81,15 +86,15 @@ if test -e /run/ostree-booted; then
     done
 fi
 
-# If this is a new installation select the default configuration.
+# If this is a new installation and local profile is current, replace it by xlocal
 if [ $1 == 1 ] ; then
-    if [ $(%{_bindir/authselect} current -r | awk '{print $1}') == local ] ; then
-      %{_bindir}/authselect select %{default_profile} --force --nobackup &> /dev/null
+    OldProfile=$(%{_bindir/authselect} current -r | awk '{print $1}')
+    OldProfileName=$(echo $OldProfile | awk '{print $1}')
+    if [ "$OldProfileName" == local ] ; then
+        %{_bindir}/authselect select x$OldProfile with-pam-mount --force --nobackup &> /dev/null
+    fi
     exit 0
 fi
-
-# Minimal profile was removed. Switch to local during upgrade.
-%__sed -i '1 s/^local$/xlocal/'  %{_sysconfdir}/authselect/authselect.conf
 
 # Apply any changes to profiles (validates configuration first internally)
 %{_bindir}/authselect apply-changes &> /dev/null

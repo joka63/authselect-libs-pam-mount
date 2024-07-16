@@ -17,6 +17,8 @@ BuildArch: noarch
 %global makedir %{_builddir}/%{name}-%{version}
 
 # Patches
+Patch0012: 0012-local-with-pam-mount-feature.patch
+
 
 Requires: authselect-libs
 Requires: pam_mount
@@ -32,9 +34,9 @@ for p in %patches ; do
     %__patch -p1 -i $p
 done
 
-cp -a profiles/local profiles/xlocal
-
 %build
+
+cp -a profiles/local profiles/xlocal
 
 %check
 

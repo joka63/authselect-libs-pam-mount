@@ -3,7 +3,7 @@
 %define _empty_manifest_terminate_build 0
 %define debug_package %{nil}
 
-Name:           libpam-mount
+Name:           authselect-libs-pam-mount
 Version:        1.5.0
 Release:        0%{?dist}
 Summary:        Extends authselect profile "local" to support pam_mount
@@ -90,7 +90,7 @@ fi
 if [ $1 == 1 ] ; then
     OldProfile=$(%{_bindir/authselect} current -r | awk '{print $1}')
     OldProfileName=$(echo $OldProfile | awk '{print $1}')
-    if [ "$OldProfileName" == local ] ; then
+    if [ "$OldProfileName" == local ] && ! grep -q 'pam_mount.so' %{_datadir}/pam.d/* ; then
         %{_bindir}/authselect select x$OldProfile with-pam-mount --force --nobackup &> /dev/null
     fi
     exit 0

@@ -5,7 +5,7 @@
 
 Name:           authselect-libs-pam-mount
 Version:        1.5.0
-Release:        0%{?dist}
+Release:        1%{?dist}
 Summary:        Extends authselect profile "local" to support pam_mount
 URL:            https://github.com/authselect/authselect
 
@@ -104,3 +104,6 @@ fi
 exit 0
 
 %changelog
+* Wed Jul 17 2024 joka63 <JoKatzer@gmx.de> 1.5.0-1
+- new package built with tito
+

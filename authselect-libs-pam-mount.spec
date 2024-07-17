@@ -82,7 +82,7 @@ fi
 # Keep nss-altfiles for all rpm-ostree based systems.
 # See https://github.com/authselect/authselect/issues/48
 if test -e /run/ostree-booted; then
-    for PROFILE in `ls %{_datadir}/authselect/default/xlocal`; do
+    for PROFILE in xlocal; do
         %{_bindir}/authselect create-profile $PROFILE --vendor --base-on $PROFILE --symlink-pam --symlink-dconf --symlink=REQUIREMENTS --symlink=README &> /dev/null
         %__sed -i -e 's/{if "with-altfiles":\([^}]\+\)}/\1/g' %{_datadir}/authselect/vendor/$PROFILE/nsswitch.conf &> /dev/null
     done

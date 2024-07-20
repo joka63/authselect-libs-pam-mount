@@ -2,14 +2,18 @@
 
 This tool aims to add pam_mount support to authselect for Fedora Linux (version 40 or later).
 
-It is designed to behave like Debian's authselect-libs-pam-mount: it not only provides the pam_mount.so module, but it also adds an extended version of the local authselect profile that supports pam_mount without the need to manually edit files in `/etc/pam.d`. 
+It provides 3 files that have to be changed in the local's authselect profile to support pam_mount. 
 
-## Checkout the code
-
-To check out the code from a GitHub git repository to your local machine, run the following command:
-
-```bash
-$ git clone https://github.com/joka63/authselect-libs-pam-mount.git
+## Manual install
+Create a copy of your local authselect profile:
+```
+authselect create-profile xlocal --base-on local
+```
+This creates a new folder `/etc/authselect/custom/xlocal`, containing a copy of the local profile.
+Then download the 3 files in `profiles/xlocal` from this repo and copy them to `/etc/authselect/custom/xlocal`, e.g.:
+```
+wget https://github.com/joka63/authselect-libs-pam-mount/archive/refs/heads/master.zip
+unzip -j master.zip '*/profiles/xlocal/*' -d /etc/authselect/custom/xlocal
 ```
 
 ## Testing authselect-libs-pam-mount

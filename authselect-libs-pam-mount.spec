@@ -2,7 +2,7 @@
 
 Name:           authselect-libs-pam-mount
 Version:        1.5.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Provides extended local authselect profile to support pam_mount
 Url:            https://github.com/joka63/%{srcname}
 Source0:        %{name}-%{version}-%{release}.tar.gz
@@ -70,6 +70,9 @@ fi
 exit 0
 
 %changelog
+* Sat Jul 20 2024 joka63 <JoKatzer@gmx.de> 1.5.0-3
+- Initial commit: provide new vendor profile "xlocal" with pam_mount support
+
 * Thu Jul 18 2024 joka63 <JoKatzer@gmx.de> 1.5.0-2
 - fix: wrong vendor profile on rpm-ostree systems (JoKatzer@gmx.de)
 

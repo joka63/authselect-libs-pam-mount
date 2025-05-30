@@ -29,9 +29,9 @@ $ authselect current -r
 $ sudo authselect list
 
 # See what changes will be done by activating profile named "xlocal" with pam-mount support
-$ sudo authselect test xlocal with-silent-lastlog with-mdns4 with-fingerprint with-pam-mount
+$ sudo authselect test custom/xlocal with-silent-lastlog with-mdns4 with-fingerprint with-pam-mount
 
 # Switch from standard profile "local" to "xlocal" with pam-mount support
-$ sudo authselect select xlocal with-silent-lastlog with-mdns4 with-fingerprint with-pam-mount
+$ sudo authselect select custom/xlocal with-silent-lastlog with-mdns4 with-fingerprint with-pam-mount
 ```
 

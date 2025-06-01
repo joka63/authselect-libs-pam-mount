@@ -2,7 +2,7 @@
 
 Name:           authselect-libs-pam-mount
 Version:        1.5.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Provides extended local authselect profile to support pam_mount
 Url:            https://github.com/joka63/%{srcname}
 Source0:        %{name}-%{version}.tar.gz
@@ -70,6 +70,10 @@ fi
 exit 0
 
 %changelog
+* Sun Jun 01 2025 joka63 <JoKatzer@gmx.de> 1.5.0-5
+- doc(README): Added package installation instructions and a use case
+  (JoKatzer@gmx.de)
+
 * Sun Jul 21 2024 joka63 <JoKatzer@gmx.de> 1.5.0-4
 - fix: build failed after tagging (JoKatzer@gmx.de)
 - docs: Updated README.md (JoKatzer@gmx.de)

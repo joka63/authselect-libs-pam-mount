@@ -12,7 +12,7 @@ sudo dnf install authselect-libs-pam-mount
 
 ## Installation on Fedora Atomic Desktop
 ```bash
-sudo curl -o /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:joka63:extras.repo https://copr.fedorainfracloud.org/coprs/joka63/extras/repo/fedora-42/joka63-extras-fedora-42.repo
+sudo curl -o /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:joka63:extras.repo https://copr.fedorainfracloud.org/coprs/joka63/extras/repo/fedora-43/joka63-extras-fedora-43.repo
 sudo rpm-ostree install authselect-libs-pam-mount
 ```
 On Fedora Atomic Desktop you need to reboot. 
